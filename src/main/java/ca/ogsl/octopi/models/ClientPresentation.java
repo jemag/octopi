@@ -11,8 +11,6 @@ import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -22,6 +20,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -29,8 +29,8 @@ import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Table(name = "client_presentation")
-@ApiModel(
-    value = "Client Presentation",
+@Schema(
+    name = "Client Presentation",
     description = "The information necessary for presenting a map layer to a user in a particular"
         + " way. Includes styling information and legend information"
 )
@@ -43,15 +43,15 @@ public class ClientPresentation {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty(
+  @Schema(
       required = true
   )
   private Integer id;
 
   @Basic
   @Column(name = "style_def")
-  @ApiModelProperty(
-      value = "String representation of a JSON collection storing information about how to style a layer"
+  @Schema(
+      description = "String representation of a JSON collection storing information about how to style a layer"
   )
   @JsonRawValue
   private String styleDef;
@@ -59,8 +59,8 @@ public class ClientPresentation {
   @Basic
   @Column(name = "legend_url")
   @URL
-  @ApiModelProperty(
-      value = "The URL of an image of the legend for the current presentation"
+  @Schema(
+      description = "The URL of an image of the legend for the current presentation"
   )
   private String legendUrl;
 
@@ -68,30 +68,30 @@ public class ClientPresentation {
   @Column(name = "legend_label")
   @SafeHtml
   @Length(max = 75)
-  @ApiModelProperty(
-      value = "A label to accompany the legend_url"
+  @Schema(
+      description = "A label to accompany the legend_url"
   )
   private String legendLabel;
 
   @Basic
   @Column(name = "layer_id")
   @NotNull
-  @ApiModelProperty(
-      value = "The ID of the layer for this style",
+  @Schema(
+      description = "The ID of the layer for this style",
       required = true
   )
   private Integer layerId;
   @Basic
   @Column(name = "is_default")
-  @ApiModelProperty(
-      value = "Specifies whether or not this client presentation is the default one. "
+  @Schema(
+      description = "Specifies whether or not this client presentation is the default one. "
           + "Only one client presentation may be the default one"
   )
   private Boolean isDefault;
   @Basic
   @Column(name = "named_style")
-  @ApiModelProperty(
-      value = "A named style to be included when queryying a WMS URL"
+  @Schema(
+      description = "A named style to be included when queryying a WMS URL"
   )
   private String namedStyle;
 

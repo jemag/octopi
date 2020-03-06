@@ -10,8 +10,6 @@ import ca.ogsl.octopi.validation.tagging.PostCheck;
 import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -28,6 +26,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -35,8 +35,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "category")
-@ApiModel(
-    value = "Category Hierarchy",
+@Schema(
+    name = "Category Hierarchy",
     description = "Organizes layers into hierarchies for navigation. Include full hierarchy."
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -48,7 +48,7 @@ public class CategoryHierarchy {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   private Integer id;
 
   @Basic
@@ -56,9 +56,9 @@ public class CategoryHierarchy {
   @NotBlank
   @SafeHtml
   @Length(min = 1, max = 100)
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "A human readable label for the category",
+      description = "A human readable label for the category",
       example = "Ocean Physics"
   )
   private String label;
@@ -67,9 +67,9 @@ public class CategoryHierarchy {
   @Column(name = "type")
   @Pattern(regexp = "root|category|layer")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "Discriminator specifying whether the category represents a root, a category, or a"
+      description = "Discriminator specifying whether the category represents a root, a category, or a"
           + " layer",
       example = "category",
       allowableValues = "root,category,layer"
@@ -78,15 +78,15 @@ public class CategoryHierarchy {
 
   @Basic
   @Column(name = "layer_id")
-  @ApiModelProperty(
-      value = "The ID of the layer represented by this category. Only relevant for type: 'layer'"
+  @Schema(
+      description = "The ID of the layer represented by this category. Only relevant for type: 'layer'"
   )
   private Integer layerId;
 
   @Basic
   @Column(name = "is_expanded")
-  @ApiModelProperty(
-      value = "Specifies whether or not the category should be expanded by default"
+  @Schema(
+      description = "Specifies whether or not the category should be expanded by default"
   )
   private Boolean isExpanded;
 
@@ -96,8 +96,8 @@ public class CategoryHierarchy {
   @OrderBy("type ASC")
   @ManyToMany(fetch = FetchType.LAZY)
   @Valid
-  @ApiModelProperty(
-      value = "The nested hierarchy of categories within the current category"
+  @Schema(
+      description = "The nested hierarchy of categories within the current category"
   )
   private Collection<CategoryHierarchy> categories;
 

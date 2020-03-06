@@ -10,8 +10,6 @@ import ca.ogsl.octopi.validation.tagging.PostCheck;
 import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,12 +18,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "click_formatter")
-@ApiModel(
-    value = "Click Formatter",
+@Schema(
+    name = "Click Formatter",
     description = "The information necessary for formatting the payload of data"
         + " produced by a click on the map."
 )
@@ -38,19 +38,19 @@ public class ClickFormatter {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty(
+  @Schema(
       required = true
   )
   private Integer id;
   @Basic
-  @ApiModelProperty(
-      value = "The type of formatter to use on the client side"
+  @Schema(
+      description = "The type of formatter to use on the client side"
   )
   private String type;
   @Basic
   @Column(name = "formatter_def")
-  @ApiModelProperty(
-      value = "JSON object containing the information to format the payload"
+  @Schema(
+      description = "JSON object containing the information to format the payload"
   )
   @JsonRawValue
   private String formatterDef;

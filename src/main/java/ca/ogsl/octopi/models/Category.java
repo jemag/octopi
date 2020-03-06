@@ -10,8 +10,6 @@ import ca.ogsl.octopi.validation.tagging.PostCheck;
 import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -21,13 +19,15 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@ApiModel(value = "Category", description = "Organizes layers into hierarchies for navigation")
+@Schema(name = "Category", description = "Organizes layers into hierarchies for navigation")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Category {
 
@@ -37,7 +37,7 @@ public class Category {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   private Integer id;
 
   @Basic
@@ -45,9 +45,9 @@ public class Category {
   @NotBlank
   @SafeHtml
   @Length(min = 1, max = 100)
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "A human readable label for the category",
+      description = "A human readable label for the category",
       example = "Ocean Physics"
   )
   private String label;
@@ -56,9 +56,9 @@ public class Category {
   @Column(name = "type")
   @Pattern(regexp = "root|category|layer")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "Discriminator specifying whether the category represents a root, a category, or a"
+      description = "Discriminator specifying whether the category represents a root, a category, or a"
           + " layer",
       example = "category",
       allowableValues = "root,category,layer"
@@ -67,15 +67,15 @@ public class Category {
 
   @Basic
   @Column(name = "layer_id")
-  @ApiModelProperty(
-      value = "The ID of the layer represented by this category. Only relevant for type: 'layer'"
+  @Schema(
+      description = "The ID of the layer represented by this category. Only relevant for type: 'layer'"
   )
   private Integer layerId;
 
   @Basic
   @Column(name = "is_expanded")
-  @ApiModelProperty(
-      value = "Specifies whether or not the category should be expanded by default"
+  @Schema(
+      description = "Specifies whether or not the category should be expanded by default"
   )
   private Boolean isExpanded;
 

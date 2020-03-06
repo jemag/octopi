@@ -9,8 +9,6 @@ package ca.ogsl.octopi.models;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
 import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -20,14 +18,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "layer_description")
-@ApiModel(
-    value = "Layer Description",
+@Schema(
+    name = "Layer Description",
     description = "Human readable layer descriptions"
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -39,25 +39,25 @@ public class LayerDescription {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty()
+  @Schema()
   private Integer id;
 
   @Basic
   @Column(name = "description")
   @NotBlank
   @SafeHtml
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "A human readable description for the layer"
+      description = "A human readable description for the layer"
   )
   private String description;
 
   @Basic
   @Column(name = "layer_id", unique = true)
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "The ID of the layer being described"
+      description = "The ID of the layer being described"
   )
   private Integer layerId;
 

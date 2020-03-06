@@ -7,20 +7,19 @@
 package ca.ogsl.octopi.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
-@ApiModel(
-    value = "WFS layer",
-    description = "A child inheriting from Layer with specialized attributes for WFS.",
-    parent = Layer.class
+@Schema(
+    name = "WFS layer",
+    description = "A child inheriting from Layer with specialized attributes for WFS."
 )
 @Table(name = "wfs_layer")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -29,32 +28,32 @@ public class WfsLayer extends Layer {
   @Basic
   @Column(name = "identifier")
   @NotBlank
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "A layer identifier to be included when querying the WFS URL.",
+      description = "A layer identifier to be included when querying the WFS URL.",
       example = "emodnet:route_ap_temp_7d"
   )
   private String identifier;
 
   @Basic
   @Column(name = "named_style")
-  @ApiModelProperty(
-      value = "A named style to be included when querying the WFS URL."
+  @Schema(
+      description = "A named style to be included when querying the WFS URL."
   )
   private String namedStyle;
 
   @Basic
   @Column(name = "crs")
-  @ApiModelProperty(
-      value = "The name of the CRS which should be used for the layer.",
+  @Schema(
+      description = "The name of the CRS which should be used for the layer.",
       example = "urn:ogc:def:crs:EPSG::4326"
   )
   private String crs;
 
   @Basic
   @Column(name = "version")
-  @ApiModelProperty(
-      value = "The version number to be included when querying the WFS URL."
+  @Schema(
+      description = "The version number to be included when querying the WFS URL."
   )
   private String version;
 

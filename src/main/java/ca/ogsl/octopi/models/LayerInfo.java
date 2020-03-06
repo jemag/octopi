@@ -9,8 +9,6 @@ package ca.ogsl.octopi.models;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
 import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -20,6 +18,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -27,8 +27,8 @@ import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Table(name = "layer_info")
-@ApiModel(
-    value = "Layer Info",
+@Schema(
+    name = "Layer Info",
     description = "Stores information about layers as label:value pairs"
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -40,14 +40,14 @@ public class LayerInfo {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   private Integer id;
 
   @Basic
   @Column(name = "label")
   @NotBlank
   @SafeHtml
-  @ApiModelProperty(
+  @Schema(
       required = true,
       example = "DFO - Frequency of updates"
   )
@@ -56,7 +56,7 @@ public class LayerInfo {
   @Basic
   @Column(name = "value")
   @SafeHtml
-  @ApiModelProperty(
+  @Schema(
       example = "3 min"
   )
   private String value;
@@ -65,17 +65,17 @@ public class LayerInfo {
   @Column(name = "url")
   @URL
   @SafeHtml
-  @ApiModelProperty(
-      value = "A URL for more information about the current LayerInfo entry."
+  @Schema(
+      description = "A URL for more information about the current LayerInfo entry."
   )
   private String url;
 
   @Basic
   @Column(name = "layer_id")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "The ID of the layer described by the current LayerInfo entry."
+      description = "The ID of the layer described by the current LayerInfo entry."
   )
   private Integer layerId;
 

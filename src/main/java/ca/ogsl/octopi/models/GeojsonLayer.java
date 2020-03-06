@@ -7,15 +7,15 @@
 package ca.ogsl.octopi.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@ApiModel(
-    value = "GeoJSON layer",
-    description = "A child inheriting from Layer with specialized attributes for GeoJSON.",
-    parent = Layer.class
+@Schema(
+    name = "GeoJSON layer",
+    description = "A child inheriting from Layer with specialized attributes for GeoJSON."
 )
 @Table(name = "geojson_layer")
 @JsonInclude(JsonInclude.Include.NON_NULL)

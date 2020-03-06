@@ -10,24 +10,8 @@ import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.TopicGroup;
 import ca.ogsl.octopi.services.TopicGroupService;
 import ca.ogsl.octopi.util.AppConstants;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @Path("topic-groups")
 @Api(tags = {"Topic Group"})

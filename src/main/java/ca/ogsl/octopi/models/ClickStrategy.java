@@ -11,8 +11,6 @@ import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,12 +21,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@ApiModel(
-    value = "Click Strategy",
-    discriminator = "type",
+@Schema(
+    name = "Click Strategy",
+    discriminatorProperty = "type",
     description = "Abstract base type for all click strategies",
     subTypes = {WmsStrategy.class}
 )
@@ -47,24 +47,24 @@ public class ClickStrategy {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   private Integer id;
 
   @Column(name = "type")
   @Pattern(regexp = "wms")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "Specifies the type of ClickStrategy",
+      description = "Specifies the type of ClickStrategy",
       example = "wms",
       allowableValues = "wms"
   )
   private String type;
   @Column(name = "empty_validator_code")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "Specifies the code of the client handler validating whether the click payload"
+      description = "Specifies the code of the client handler validating whether the click payload"
           + " is empty",
       example = "wms-html",
       allowableValues = "wms-html"

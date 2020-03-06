@@ -7,7 +7,8 @@
 package ca.ogsl.octopi.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -19,11 +20,11 @@ import javax.persistence.Id;
 public class Language {
 
   @Id
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   @Column(name = "code")
   private String code;
   @Basic
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   @Column(name = "name")
   private String name;
 

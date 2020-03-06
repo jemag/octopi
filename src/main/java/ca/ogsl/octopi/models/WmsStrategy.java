@@ -7,8 +7,8 @@
 package ca.ogsl.octopi.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,10 +16,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@ApiModel(
-    value = "WMS Strategy",
-    description = "A child inheriting from Click Strategy with specialized attributes for WMS Strategy.",
-    parent = ClickStrategy.class
+@Schema(
+    name = "WMS Strategy",
+    description = "A child inheriting from Click Strategy with specialized attributes for WMS Strategy."
 )
 @Table(name = "wms_strategy")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,16 +26,16 @@ public class WmsStrategy extends ClickStrategy {
 
   @Basic
   @Column(name = "format")
-  @ApiModelProperty(
-      value = "A format string to be included when querying the WMS get feature info URL.",
+  @Schema(
+      description = "A format string to be included when querying the WMS get feature info URL.",
       example = "application/json"
   )
   @NotNull
   private String format;
   @Basic
   @Column(name = "feature_count")
-  @ApiModelProperty(
-      value = "The number of features to retrieve",
+  @Schema(
+      description = "The number of features to retrieve",
       example = "5"
   )
   @NotNull

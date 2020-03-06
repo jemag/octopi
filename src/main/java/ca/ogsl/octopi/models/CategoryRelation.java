@@ -9,8 +9,6 @@ package ca.ogsl.octopi.models;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
 import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,11 +16,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "category_child")
-@ApiModel(value = "Category Relation", description = "Relation between a parent and a child category")
+@Schema(name = "Category Relation", description = "Relation between a parent and a child category")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryRelation {
 
@@ -32,22 +32,22 @@ public class CategoryRelation {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   private Integer id;
 
   @NotNull
   @Column(name = "parent_id")
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "Identifier of the parent category"
+      description = "Identifier of the parent category"
   )
   private Integer parentId;
 
   @NotNull
   @Column(name = "child_id")
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "Identifier of the child category"
+      description = "Identifier of the child category"
   )
   private Integer childId;
 

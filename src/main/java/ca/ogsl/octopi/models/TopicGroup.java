@@ -9,8 +9,6 @@ package ca.ogsl.octopi.models;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
 import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Basic;
@@ -24,14 +22,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "topic_group", schema = "public", catalog = "octopi-dev")
-@ApiModel(
-    value = "Topic Group",
+@Table(name = "topic_group", schema = "public", catalog = "octopi")
+@Schema(
+    name = "Topic Group",
     description = "Groups together multiple topics."
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -43,40 +43,40 @@ public class TopicGroup {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   private Integer id;
 
   @Basic
   @Column(name = "name")
   @SafeHtml
   @Length(min = 1, max = 75)
-  @ApiModelProperty(
-      value = "A human readable, descriptive name for the topic group"
+  @Schema(
+      description = "A human readable, descriptive name for the topic group"
   )
   private String name;
 
   @Basic
   @Column(name = "language_code")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "The identifier of the language for this group."
+      description = "The identifier of the language for this group."
   )
   private String languageCode;
 
   @ElementCollection
   @CollectionTable(name = "topic_group_member", joinColumns = @JoinColumn(name = "topic_group_id"))
   @Column(name = "topic_id")
-  @ApiModelProperty(
-      value = "A list of IDs for the topics contained within this group"
+  @Schema(
+      description = "A list of IDs for the topics contained within this group"
   )
   private Set<Integer> topicIds;
   @Basic
   @Column(name = "code")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "A human readable code used to relate this layer to other layers. Commonly used to "
+      description = "A human readable code used to relate this layer to other layers. Commonly used to "
           + "link two copies of the same layer in different languages"
   )
   private String code;

@@ -13,8 +13,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -26,14 +24,16 @@ import javax.persistence.InheritanceType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.hibernate.validator.constraints.URL;
 
 @Entity
-@ApiModel(
-    value = "Layer",
-    discriminator = "type",
+@Schema(
+    name = "Layer",
+    discriminatorProperty = "type",
     description = "Abstract base type for all layers",
     subTypes = {WmsLayer.class, WfsLayer.class, GeojsonLayer.class, BingLayer.class}
 )
@@ -54,15 +54,15 @@ public class Layer {
   @Column(name = "id")
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   private Integer id;
 
   @Column(name = "type")
   @Pattern(regexp = "wms|wfs|geojson|bing")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "Specifies the type of layer",
+      description = "Specifies the type of layer",
       example = "wms",
       allowableValues = "wms,wfs,geojson,bing"
   )
@@ -70,24 +70,24 @@ public class Layer {
 
   @Basic
   @Column(name = "z_index")
-  @ApiModelProperty(
+  @Schema(
       name = "zIndex",
-      value = "Specifies the visual level of the layer"
+      description = "Specifies the visual level of the layer"
   )
   private Integer zIndex;
 
   @Basic
   @Column(name = "opacity")
-  @ApiModelProperty(
-      value = "Specifies the opacity of the layer"
+  @Schema(
+      description = "Specifies the opacity of the layer"
   )
   private Double opacity;
 
   @Basic
   @Column(name = "title")
   @SafeHtml
-  @ApiModelProperty(
-      value = "A human readable, descriptive title for the layer"
+  @Schema(
+      description = "A human readable, descriptive title for the layer"
   )
   private String title;
 
@@ -101,9 +101,9 @@ public class Layer {
   @Column(name = "default_crs")
   @SafeHtml
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "The default CRS the layer is available in",
+      description = "The default CRS the layer is available in",
       example = "EPSG:4326"
   )
   private String defaultCrs;
@@ -113,17 +113,17 @@ public class Layer {
   @SafeHtml
   @URL
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "The URL where the layer can be accessed",
+      description = "The URL where the layer can be accessed",
       example = "http://ec.oceanbrowser.net/emodnet/Python/web/wms"
   )
   private String url;
 
   @Basic
   @Column(name = "url_parameters")
-  @ApiModelProperty(
-      value = "A string representation of a JSON collection containing additional URL parameters "
+  @Schema(
+      description = "A string representation of a JSON collection containing additional URL parameters "
           + "for the layer"
   )
   @JsonRawValue
@@ -133,18 +133,18 @@ public class Layer {
   @Column(name = "language_code")
   @NotNull
   @SafeHtml
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "The identifier of the language for this layer"
+      description = "The identifier of the language for this layer"
   )
   private String languageCode;
 
   @Basic
   @Column(name = "code")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "A human readable code used to relate this layer to other layers. Commonly used to "
+      description = "A human readable code used to relate this layer to other layers. Commonly used to "
           + "link two copies of the same layer in different languages"
   )
   private String code;
@@ -157,8 +157,8 @@ public class Layer {
 
   @Basic
   @Column(name = "url_behaviors")
-  @ApiModelProperty(
-      value = "A string representation of a JSON collection containing the behaviors of the "
+  @Schema(
+      description = "A string representation of a JSON collection containing the behaviors of the "
           + "dynamic url parameters"
   )
   @JsonRawValue
@@ -204,9 +204,9 @@ public class Layer {
   }
 
   @JsonProperty("isVisible")
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "Whether or not the layer should be visible"
+      description = "Whether or not the layer should be visible"
   )
   public Boolean isVisible() {
     return isVisible;

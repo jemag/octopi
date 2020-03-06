@@ -9,8 +9,6 @@ package ca.ogsl.octopi.models;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
 import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,12 +21,14 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "topic")
-@ApiModel(
-    value = "Topic Hierarchy",
+@Schema(
+    name = "Topic Hierarchy",
     description = "A top level grouping of categories, used to identify the root of the"
         + " hierarchy of categories. Useful for creating themes. Contains full hierarchy."
 )
@@ -41,28 +41,28 @@ public class TopicHierarchy {
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
   @Column(name = "id")
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   private Integer id;
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "root")
   @Valid
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "The ID of the root category identified by this topic."
+      description = "The ID of the root category identified by this topic."
   )
   private CategoryHierarchy root;
   @Basic
   @Column(name = "code")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "A human readable code used to relate this topic to other topics. Commonly used to "
+      description = "A human readable code used to relate this topic to other topics. Commonly used to "
           + "link two copies of the same topic in different languages."
   )
   private String code;
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "The identifier of the language for this topic"
+      description = "The identifier of the language for this topic"
   )
   @NotNull
   @Column(name = "language_code")

@@ -9,8 +9,6 @@ package ca.ogsl.octopi.models;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
 import ca.ogsl.octopi.validation.tagging.PutCheck;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -19,10 +17,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@ApiModel(description = "A top level grouping of categories, used to identify the root of the"
+@Schema(description = "A top level grouping of categories, used to identify the root of the"
     + " hierarchy of categories. Useful for creating themes.")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Topic {
@@ -33,37 +33,37 @@ public class Topic {
   @Null(groups = PostCheck.class)
   @NotNull(groups = PutCheck.class)
   @Column(name = "id")
-  @ApiModelProperty(required = true)
+  @Schema(required = true)
   private Integer id;
   private Integer root;
   @Basic
   @Column(name = "code")
   @NotNull
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "A human readable code used to relate this topic to other topics. Commonly used to "
+      description = "A human readable code used to relate this topic to other topics. Commonly used to "
           + "link two copies of the same topic in different languages."
   )
   private String code;
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "The identifier of the language for this topic"
+      description = "The identifier of the language for this topic"
   )
   @NotNull
   @Column(name = "language_code")
   private String languageCode;
   @Basic
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "A human readable descriptive label for the topic"
+      description = "A human readable descriptive label for the topic"
   )
   @NotNull
   @Column(name = "label")
   private String label;
   @Basic
-  @ApiModelProperty(
+  @Schema(
       required = true,
-      value = "URL for an image representation of the topic"
+      description = "URL for an image representation of the topic"
   )
   @NotNull
   @Column(name = "image_url")

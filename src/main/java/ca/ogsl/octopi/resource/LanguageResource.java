@@ -3,49 +3,41 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-
 package ca.ogsl.octopi.resource;
 
 import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.Language;
 import ca.ogsl.octopi.services.LanguageService;
-import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Path("languages")
-@Api(tags = {"Language"})
-@Produces(MediaType.APPLICATION_JSON)
+import java.util.Collection;
+
+@RestController
+@RequestMapping("/api")
+@Tag(name = "Language", description = "Endpoint to retrieve language objects ")
 public class LanguageResource {
-
+  
   private LanguageService languageService = new LanguageService();
-
-  @GET
-  @ApiOperation(
-      value = "Get all languages",
-      response = Language.class,
-      responseContainer = "List"
-  )
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "successful operation")})
-  public Response listLanguages() throws AppException {
-    List<Language> languageList = this.languageService.listLanguages();
-    return Response.status(200).entity(languageList).build();
+  
+  @GetMapping(value = "/languages")
+  @Operation(summary = "Get all languages")
+  public Collection<Language> listLanguages() throws AppException {
+    return this.languageService.listLanguages();
   }
-
-  @GET
-  @Path("{code}")
-  @ApiOperation(
-      value = "Find language by code",
-      response = Language.class
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "operation successful"),
-      @ApiResponse(code = 404, message = "language not found")
-  })
-  public Response getLanguageForId(
-      @ApiParam(value = "Code of language to be fetched", required = true) @PathParam("code") String code
+  
+  @GetMapping(value = "/languages/{code}")
+  @Operation(summary = "Find language by code")
+  public Language getLanguageForId(
+      @PathVariable @Parameter(description = "Code of language to be fetched", required = true) String code
   )
       throws AppException {
-    Language databaseLanguage = this.languageService.getLanguage(code);
-    return Response.status(200).entity(databaseLanguage).build();
+    return this.languageService.getLanguage(code);
   }
-
+  
 }

@@ -21,9 +21,10 @@ import ca.ogsl.octopi.models.LayerInfo;
 import ca.ogsl.octopi.util.AppConstants;
 import ca.ogsl.octopi.util.ValidationUtil;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
+import org.springframework.http.HttpStatus;
+
 import java.util.List;
 import javax.validation.groups.Default;
-import javax.ws.rs.core.Response;
 
 /**
  * Created by desjardisna on 2017-02-28.
@@ -64,7 +65,7 @@ public class LayerService {
     layerDescription = this.layerDescriptionDao.getLayerDescriptionForLayerId(layerId);
     String layerTitle = this.layerDao.getLayerTitle(layerId);
     if (layerDescription == null) {
-      throw new AppException(Response.Status.BAD_REQUEST.getStatusCode(), 404,
+      throw new AppException(HttpStatus.BAD_REQUEST.value(), 404,
           "No layer information for given layer", AppConstants.PORTAL_URL);
     }
     layerInfos = layerInfoDao.getLayerInfosForLayerIdOrdered(layerId);

@@ -11,111 +11,63 @@ import ca.ogsl.octopi.models.Topic;
 import ca.ogsl.octopi.models.TopicHierarchy;
 import ca.ogsl.octopi.services.TopicService;
 import ca.ogsl.octopi.util.AppConstants;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
 
-@Path("topics")
-@Api(tags = {"Topic"})
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/api")
+@Tag(name = "Topic", description = "Endpoint to retrieve topic objects ")
 public class TopicResource {
 
   private TopicService topicService = new TopicService();
 
-  @GET
-  @ApiOperation(
-      value = "Find topic by id",
-      response = Topic.class
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "operation successful"),
-      @ApiResponse(code = 404, message = "topic not found")
-  })
-  @Path("{id}")
-  public Response getTopicForId(@PathParam("id") Integer id) throws Exception {
-    Topic topic = this.topicService.getTopicForId(id);
-    return Response.status(200).entity(topic).build();
+  @GetMapping(value = "/topics/{id}")
+  @Operation(summary = "Find topic by id")
+  public Topic getTopicForId(@PathVariable("id") Integer id) throws Exception {
+    return this.topicService.getTopicForId(id);
   }
 
-  @GET
-  @Path("getTopicForCode")
-  @ApiOperation(
-      value = "Get topic by code and language code",
-      response = Topic.class
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "operation successful"),
-      @ApiResponse(code = 404, message = "topic not found")
-  })
-  public Response getTopicGroupForCode(
-      @ApiParam(value = "Code of topic group to be fetched", required = true) @QueryParam("code") String code,
-      @ApiParam(value = "Code of the language needed", required = true)
-      @QueryParam("language-code") String languageCode) throws AppException {
-    Topic topic = this.topicService.getTopicForCode(code, languageCode);
-    return Response.status(200).entity(topic).build();
+  @GetMapping(value = "/topics/getTopicForCode")
+  @Operation(summary = "Get topic by code and language code")
+  public Topic getTopicGroupForCode(
+      @Parameter(description = "Code of topic group to be fetched", required = true) @RequestParam("code") String code,
+      @Parameter(description = "Code of the language needed", required = true)
+      @RequestParam("language-code") String languageCode) throws AppException {
+    return this.topicService.getTopicForCode(code, languageCode);
   }
 
-  @GET
-  @ApiOperation(
-      value = "Get the list of topics",
-      response = Topic.class,
-      responseContainer = "List"
-  )
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "successful operation")})
-  public Response getTopicList() {
-    List<Topic> topics = this.topicService.getTopicList();
-    return Response.status(200).entity(topics).build();
+  @GetMapping(value = "/topics")
+  @Operation(summary = "Get the list of topics")
+  public Collection<Topic> getTopicList() {
+    return this.topicService.getTopicList();
   }
 
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Create a new topic entry",
-      authorizations = {
-          @Authorization(value = "basicAuth")
-      }
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 201, message = "resource created"),
-      @ApiResponse(code = 400, message = "invalid request")
-  })
   @RolesAllowed("ADMIN")
-  public Response postCreateTopic(Topic topic)
+  @PostMapping(value = "/topics")
+  @Operation(summary = "Create a new topic entry")
+  public ResponseEntity<Topic> postCreateTopic(Topic topic)
       throws AppException {
     Topic databaseTopic = this.topicService.postCreateTopic(topic);
-    return Response.status(201).entity(databaseTopic).build();
+    return ResponseEntity.status(201).body(databaseTopic);
   }
 
-  @GET
-  @Path("{id}/getTopicHierarchy")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Get the whole hierarchy of categories for a specific topic",
-      response = TopicHierarchy.class
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "sucessful operation"),
-      @ApiResponse(code = 404, message = "Not found")
-  })
-  public Response getTopicHierarchy(@PathParam("id") Integer topicId) throws Exception {
-    TopicHierarchy topicHierarchy = this.topicService.getTopicHierarchy(topicId);
-    return Response.status(200).entity(topicHierarchy).build();
+  @GetMapping(value = "/topics/{id}/getTopicHierarchy")
+  @Operation(summary = "Get the whole hierarchy of categories for a specific topic")
+  public TopicHierarchy getTopicHierarchy(@PathVariable("id") Integer topicId) throws Exception {
+    return this.topicService.getTopicHierarchy(topicId);
   }
 
-  @PUT
-  @Path("{id}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Update a topic entry",
-      authorizations = {
-          @Authorization(value = "basicAuth")
-      }
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "successful operation"),
-      @ApiResponse(code = 400, message = "invalid request")
-  })
   @RolesAllowed("ADMIN")
-  public Response putUpdateTopic(@PathParam("id") Integer topicId, Topic topic)
+  @PutMapping(value = "/topics/{id}")
+  @Operation(summary = "Update a topic entry")
+  public ResponseEntity putUpdateTopic(@PathVariable("id") Integer topicId, Topic topic)
       throws AppException {
     Topic oldTopic = this.topicService.retrieveTopic(topicId);
     if (oldTopic == null) {
@@ -123,7 +75,7 @@ public class TopicResource {
           "Use post to create entity", AppConstants.PORTAL_URL);
     } else {
       this.topicService.putUpdateTopic(topic, oldTopic);
-      return Response.status(200).build();
+      return ResponseEntity.status(200).build();
     }
   }
 }

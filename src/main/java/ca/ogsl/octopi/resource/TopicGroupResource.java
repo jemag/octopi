@@ -10,97 +10,59 @@ import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.TopicGroup;
 import ca.ogsl.octopi.services.TopicGroupService;
 import ca.ogsl.octopi.util.AppConstants;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
 
-@Path("topic-groups")
-@Api(tags = {"Topic Group"})
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/api")
+@Tag(name = "Topic Group", description = "Endpoint to retrieve topic group objects ")
 public class TopicGroupResource {
 
   private TopicGroupService topicGroupService = new TopicGroupService();
 
-  @GET
-  @ApiOperation(
-      value = "Get a list of all topic groups",
-      response = TopicGroup.class,
-      responseContainer = "List"
-  )
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "successful operation")})
-  public Response listTopicGroups() throws AppException {
-    List<TopicGroup> topicGroups = this.topicGroupService.listTopicGroups();
-    return Response.status(200).entity(topicGroups).build();
+  @GetMapping(value = "/topic-groups")
+  @Operation(summary = "Get a list of all topic groups")
+  public Collection<TopicGroup> listTopicGroups() throws AppException {
+    return this.topicGroupService.listTopicGroups();
   }
 
-  @GET
-  @Path("{id}")
-  @ApiOperation(
-      value = "Get topic group by ID",
-      response = TopicGroup.class
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "operation successful"),
-      @ApiResponse(code = 404, message = "topic group not found")
-  })
-  public Response getTopicGroup(
-      @ApiParam(value = "ID of topic group to be fetched", required = true) @PathParam("id") Integer id
+  @GetMapping(value = "/topic-groups/{id}")
+  @Operation(summary = "Get a topic group by ID")
+  public TopicGroup getTopicGroup(
+      @PathVariable @Parameter(description = "ID of topic group to be fetched", required = true) Integer id
   ) throws AppException {
-    TopicGroup topicGroup = this.topicGroupService.getTopicGroup(id);
-    return Response.status(200).entity(topicGroup).build();
+    return this.topicGroupService.getTopicGroup(id);
   }
 
-  @GET
-  @Path("getTopicGroupForCode")
-  @ApiOperation(
-      value = "Get topic group by code and language code",
-      response = TopicGroup.class
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "operation successful"),
-      @ApiResponse(code = 404, message = "topic group not found")
-  })
-  public Response getTopicGroupForCode(
-      @ApiParam(value = "Code of topic group to be fetched", required = true) @QueryParam("code") String code,
-      @ApiParam(value = "Code of the language needed", required = true)
-      @QueryParam("language-code") String languageCode) throws AppException {
-    TopicGroup topicGroup = this.topicGroupService.getTopicGroupForCode(code, languageCode);
-    return Response.status(200).entity(topicGroup).build();
+  @GetMapping(value = "/topic-groups/getTopicGroupForCode")
+  @Operation(summary = "Get topic group by code and language code")
+  public TopicGroup getTopicGroupForCode(
+      @PathVariable @Parameter(description = "Code of topic group to be fetched", required = true) String code,
+      @PathVariable @Parameter(description = "Code of the language needed", required = true)
+      @RequestParam("language-code") String languageCode) throws AppException {
+    return this.topicGroupService.getTopicGroupForCode(code, languageCode);
   }
 
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Create a new TopicGroup entry",
-      authorizations = {
-          @Authorization(value = "basicAuth")
-      }
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 201, message = "resource created"),
-      @ApiResponse(code = 400, message = "invalid request")
-  })
   @RolesAllowed("ADMIN")
-  public Response postCreateTopicGroup(TopicGroup topicGroup)
+  @PostMapping(value = "/topic-groups")
+  @Operation(summary = "Create a new topic group entry")
+  public ResponseEntity<TopicGroup> postCreateTopicGroup(TopicGroup topicGroup)
       throws AppException {
     TopicGroup databaseTopicGroup = this.topicGroupService.postCreateTopicGroup(topicGroup);
-    return Response.status(201).entity(databaseTopicGroup).build();
+    return ResponseEntity.status(201).body(databaseTopicGroup);
   }
 
-  @PUT
-  @Path("{id}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Update a TopicGroup entry.",
-      authorizations = {
-          @Authorization(value = "basicAuth")
-      }
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "successful operation"),
-      @ApiResponse(code = 400, message = "invalid request")
-  })
+  @PutMapping(value = "/topic-groups/{id}")
+  @Operation(summary = "Update a topic group entry")
   @RolesAllowed("ADMIN")
-  public Response putTopicGroup(@PathParam("id") Integer topicGroupId, TopicGroup topicGroup)
+  public ResponseEntity putTopicGroup(@PathVariable("id") Integer topicGroupId, TopicGroup topicGroup)
       throws AppException {
     TopicGroup oldTopicGroup = this.topicGroupService.retrieveTopicGroup(topicGroupId);
     if (oldTopicGroup == null) {
@@ -108,7 +70,7 @@ public class TopicGroupResource {
           "Use post to create entity", AppConstants.PORTAL_URL);
     } else {
       this.topicGroupService.putUpdateTopicGroup(topicGroup, oldTopicGroup);
-      return Response.status(200).build();
+      return ResponseEntity.status(200).build();
     }
   }
 }

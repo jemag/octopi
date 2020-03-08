@@ -3,89 +3,58 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-
 package ca.ogsl.octopi.resource;
 
 import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.CategoryRelation;
 import ca.ogsl.octopi.services.CategoryRelationService;
 import ca.ogsl.octopi.util.AppConstants;
-import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.security.RolesAllowed;
+import java.util.Collection;
 
-@Path("category-relations")
-@Api(tags = {"Category Relation"})
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/api")
+@Tag(name = "Category Relation", description = "Endpoint to retrieve category relations objects ")
 public class CategoryRelationResource {
-
+  
   private CategoryRelationService categoryRelationService = new CategoryRelationService();
-
-  @GET
-  @ApiOperation(
-      value = "Get a list of all category relations",
-      response = CategoryRelation.class,
-      responseContainer = "List"
-  )
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "successful operation")})
-  public Response listCategories() throws AppException {
-    List<CategoryRelation> categoryRelations = this.categoryRelationService.listCategoryRelations();
-    return Response.status(200).entity(categoryRelations).build();
+  
+  @GetMapping(value = "/category-relations")
+  @Operation(summary = "Get a list of all category relations")
+  public Collection<CategoryRelation> listCategories() throws AppException {
+    return this.categoryRelationService.listCategoryRelations();
   }
-
-  @GET
-  @Path("{id}")
-  @ApiOperation(
-      value = "Get category relation by ID",
-      response = CategoryRelation.class
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "operation successful"),
-      @ApiResponse(code = 404, message = "category relation not found")
-  })
-  public Response getCategoryRelation(
-      @ApiParam(value = "ID of category relation to be fetched", required = true) @PathParam("id") Integer id
+  
+  @GetMapping(value = "/category-relations/{id}")
+  @Operation(summary = "Get category relation by ID")
+  public CategoryRelation getCategoryRelation(
+      @PathVariable @Parameter(description = "ID of category relation to be fetched", required = true) Integer id
   ) throws AppException {
-    CategoryRelation category = this.categoryRelationService.getCategoryRelation(id);
-    return Response.status(200).entity(category).build();
+    return this.categoryRelationService.getCategoryRelation(id);
   }
-
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Create a new category relation entry",
-      authorizations = {
-          @Authorization(value = "basicAuth")
-      }
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 201, message = "resource created"),
-      @ApiResponse(code = 400, message = "invalid request")
-  })
+  
   @RolesAllowed("ADMIN")
-  public Response postCreateCategoryRelation(CategoryRelation categoryRelation)
+  @PostMapping(value = "/category-relations")
+  @Operation(summary = "Create a new category relation entry")
+  public ResponseEntity<CategoryRelation> postCreateCategoryRelation(CategoryRelation categoryRelation)
       throws AppException {
-    CategoryRelation databaseCategoryRelation = this.categoryRelationService
+    CategoryRelation cR = this.categoryRelationService
         .postCreateCategoryRelation(categoryRelation);
-    return Response.status(201).entity(databaseCategoryRelation).build();
+    return new ResponseEntity<>(cR, HttpStatus.CREATED);
   }
-
-
-  @PUT
-  @Path("{id}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Update a category relation entry",
-      authorizations = {
-          @Authorization(value = "basicAuth")
-      }
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "successful operation"),
-      @ApiResponse(code = 400, message = "invalid request")
-  })
+  
   @RolesAllowed("ADMIN")
-  public Response putUpdateCategoryRelation(@PathParam("id") Integer categoryRelationId,
-      CategoryRelation categoryRelation)
+  @PutMapping(value = "/category-relations/{categoryRelationId}")
+  @Operation(summary = "Update a category relation entry")
+  public ResponseEntity putUpdateCategoryRelation(@PathVariable @Parameter Integer categoryRelationId,
+                                                  CategoryRelation categoryRelation)
       throws AppException {
     CategoryRelation oldCategoryRelation = this.categoryRelationService
         .retrieveCategoryRelation(categoryRelationId);
@@ -94,7 +63,7 @@ public class CategoryRelationResource {
           "Use post to create entity", AppConstants.PORTAL_URL);
     } else {
       this.categoryRelationService.putUpdateCategoryRelation(categoryRelation, oldCategoryRelation);
-      return Response.status(200).build();
+      return ResponseEntity.status(200).build();
     }
   }
 }

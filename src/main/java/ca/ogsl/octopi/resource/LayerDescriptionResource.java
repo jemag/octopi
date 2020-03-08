@@ -3,83 +3,49 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-
 package ca.ogsl.octopi.resource;
 
 import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.LayerDescription;
 import ca.ogsl.octopi.services.LayerDescriptionService;
-import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.security.RolesAllowed;
+import java.util.Collection;
 
-@Path("layer-descriptions")
-@Api(tags = {"Layer Description"})
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/api")
+@Tag(name = "Layer Description", description = "Endpoint to retrieve layer description objects ")
 public class LayerDescriptionResource {
-
+  
   private LayerDescriptionService layerDescriptionService = new LayerDescriptionService();
-
-  @GET
-  @ApiOperation(
-      value = "Get all layer descriptions",
-      response = LayerDescription.class,
-      responseContainer = "List"
-  )
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "successful operation")})
-  public Response listLayerDescriptions() throws AppException {
-    List<LayerDescription> layerDescriptions = this.layerDescriptionService
-        .listLayerDescriptions();
-    return Response.status(200).entity(layerDescriptions).build();
+  
+  @GetMapping(value = "/layer-descriptions")
+  @Operation(summary = "Get all layer descriptions")
+  public Collection<LayerDescription> listLayerDescriptions() throws AppException {
+    return this.layerDescriptionService.listLayerDescriptions();
   }
-
-  @GET
-  @Path("{id}")
-  @ApiOperation(
-      value = "Find layer description by ID",
-      response = LayerDescription.class
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "operation successful"),
-      @ApiResponse(code = 404, message = "layer description not found")
-  })
-  public Response getLayerDescriptionForId(
-      @ApiParam(value = "ID of the layer description to be fetched", required = true) @PathParam("id") Integer id
+  
+  @GetMapping(value = "/layer-descriptions/{id}")
+  @Operation(summary = "Find layer description by ID")
+  public LayerDescription getLayerDescriptionForId(
+      @PathVariable @Parameter(description = "ID of the layer description to be fetched", required = true) Integer id
   ) throws
       AppException {
-    LayerDescription layerDescription = this.layerDescriptionService
-        .getLayerDescriptionForId(id);
-    return Response.status(200).entity(layerDescription).build();
+    return this.layerDescriptionService.getLayerDescriptionForId(id);
   }
-
-  @DELETE
-  @Path("{id}")
-  @ApiOperation(
-      value = "Delete layer description based on ID. LEGACY",
-      hidden = true
-  )
-  public Response deleteLayerDescriptionForId(@PathParam("id") Integer id,
-      @HeaderParam("role") String role) throws AppException {
-    this.layerDescriptionService.deleteLayerDescriptionForId(id, role);
-    return Response.status(204).build();
-  }
-
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Create a new layer description entry",
-      authorizations = {
-          @Authorization(value = "basicAuth")
-      }
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 201, message = "resource created"),
-      @ApiResponse(code = 400, message = "invalid request")
-  })
+  
   @RolesAllowed("ADMIN")
-  public Response postCreateLayerDescription(LayerDescription layerDescription)
+  @PostMapping(value = "/layer-descriptions")
+  @Operation(summary = "Create a new layer description entry")
+  public ResponseEntity<LayerDescription> postCreateLayerDescription(LayerDescription layerDescription)
       throws AppException {
     LayerDescription databaseLayerDescription = this.layerDescriptionService
         .postCreateLayerDescription(layerDescription);
-    return Response.status(201).entity(databaseLayerDescription).build();
+    return ResponseEntity.status(201).body(databaseLayerDescription);
   }
 }

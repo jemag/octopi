@@ -8,6 +8,8 @@ package ca.ogsl.octopi.filter;
 
 import ca.ogsl.octopi.models.auth.Role;
 import ca.ogsl.octopi.services.AuthService;
+
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -21,6 +23,7 @@ import javax.annotation.Priority;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.*;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -34,10 +37,10 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.internal.util.Base64;
+import org.springframework.stereotype.Component;
 
-@Provider
-@Priority(Priorities.AUTHENTICATION)
-public class AuthenticationFilter implements ContainerRequestFilter {
+@Component
+public class AuthenticationFilter implements Filter {
 
   private static final Logger logger = LogManager.getLogger();
   private static final String AUTHORIZATION_PROPERTY = "Authorization";
@@ -114,6 +117,11 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         .map(Role::getCode)
         .collect(Collectors.toSet());
     return !Collections.disjoint(rolesToSet, annotatedRoles);
+  }
+  
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+  
   }
 }
 

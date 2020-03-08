@@ -3,87 +3,56 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-
 package ca.ogsl.octopi.resource;
 
 import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.Category;
 import ca.ogsl.octopi.services.CategoryService;
 import ca.ogsl.octopi.util.AppConstants;
-import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.security.RolesAllowed;
+import java.util.Collection;
 
-@Path("categories")
-@Api(tags = {"Category"})
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/api")
+@Tag(name = "Category", description = "Endpoint to retrieve category objects ")
 public class CategoryResource {
-
+  
   private CategoryService categoryService = new CategoryService();
-
-  @GET
-  @ApiOperation(
-      value = "Get a list of all categories",
-      response = Category.class,
-      responseContainer = "List"
-  )
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "successful operation")})
-  public Response listCategories() throws AppException {
-    List<Category> categories = this.categoryService.listCategories();
-    return Response.status(200).entity(categories).build();
+  
+  @GetMapping(value = "/categories")
+  @Operation(summary = "Get a list of all categories")
+  public Collection<Category> listCategories() throws AppException {
+    return this.categoryService.listCategories();
   }
-
-  @GET
-  @Path("{id}")
-  @ApiOperation(
-      value = "Get category by ID",
-      response = Category.class
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "operation successful"),
-      @ApiResponse(code = 404, message = "category not found")
-  })
-  public Response getCategory(
-      @ApiParam(value = "ID of category to be fetched", required = true) @PathParam("id") Integer id
+  
+  @GetMapping(value = "/categories/{id}")
+  @Operation(summary = "Get a category by ID")
+  public Category getCategory(
+      @PathVariable @Parameter(description = "ID of category to be fetched", required = true) Integer id
   ) throws AppException {
-    Category category = this.categoryService.getCategory(id);
-    return Response.status(200).entity(category).build();
+    return this.categoryService.getCategory(id);
   }
-
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Create a new category entry",
-      authorizations = {
-          @Authorization(value = "basicAuth")
-      }
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 201, message = "resource created"),
-      @ApiResponse(code = 400, message = "invalid request")
-  })
+  
   @RolesAllowed("ADMIN")
-  public Response postCreateCategory(Category category)
+  @PostMapping(value = "/categories")
+  @Operation(summary = "Create a new category entry")
+  public ResponseEntity<Category> postCreateCategory(Category category)
       throws AppException {
-    Category databaseCategory = this.categoryService.postCreateCategory(category);
-    return Response.status(201).entity(databaseCategory).build();
+    Category c = this.categoryService.postCreateCategory(category);
+    return new ResponseEntity<>(c, HttpStatus.CREATED);
   }
-
-
-  @PUT
-  @Path("{id}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Update a category entry",
-      authorizations = {
-          @Authorization(value = "basicAuth")
-      }
-  )
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "successful operation"),
-      @ApiResponse(code = 400, message = "invalid request")
-  })
+  
   @RolesAllowed("ADMIN")
-  public Response putUpdateCategory(@PathParam("id") Integer categoryId, Category category)
+  @PutMapping(value = "/categories/{id}")
+  @Operation(summary = "Update a category entry")
+  public ResponseEntity putUpdateCategory(@PathVariable @Parameter Integer categoryId, Category category)
       throws AppException {
     Category oldCategory = this.categoryService.retrieveCategory(categoryId);
     if (oldCategory == null) {
@@ -91,8 +60,8 @@ public class CategoryResource {
           "Use post to create entity", AppConstants.PORTAL_URL);
     } else {
       this.categoryService.putUpdateCategory(category, oldCategory);
-      return Response.status(200).build();
+      return ResponseEntity.status(200).build();
     }
   }
-
+  
 }

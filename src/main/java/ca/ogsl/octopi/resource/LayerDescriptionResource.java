@@ -5,7 +5,6 @@
  */
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.LayerDescription;
 import ca.ogsl.octopi.services.LayerDescriptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +25,7 @@ public class LayerDescriptionResource {
   
   @GetMapping(value = "/layer-descriptions")
   @Operation(summary = "Get all layer descriptions")
-  public Collection<LayerDescription> listLayerDescriptions() throws AppException {
+  public Collection<LayerDescription> listLayerDescriptions() {
     return this.layerDescriptionService.listLayerDescriptions();
   }
   
@@ -34,16 +33,14 @@ public class LayerDescriptionResource {
   @Operation(summary = "Find layer description by ID")
   public LayerDescription getLayerDescriptionForId(
       @PathVariable @Parameter(description = "ID of the layer description to be fetched", required = true) Integer id
-  ) throws
-      AppException {
+  ) {
     return this.layerDescriptionService.getLayerDescriptionForId(id);
   }
   
   @RolesAllowed("ADMIN")
   @PostMapping(value = "/layer-descriptions")
   @Operation(summary = "Create a new layer description entry")
-  public ResponseEntity<LayerDescription> postCreateLayerDescription(LayerDescription layerDescription)
-      throws AppException {
+  public ResponseEntity<LayerDescription> postCreateLayerDescription(LayerDescription layerDescription) {
     LayerDescription databaseLayerDescription = this.layerDescriptionService
         .postCreateLayerDescription(layerDescription);
     return ResponseEntity.status(201).body(databaseLayerDescription);

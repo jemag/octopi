@@ -6,17 +6,17 @@
 
 package ca.ogsl.octopi.dao;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.LayerInfo;
 import ca.ogsl.octopi.models.LayerInfo_;
-import java.util.ArrayList;
-import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LayerInfoDao {
 
@@ -35,9 +35,8 @@ public class LayerInfoDao {
       em.close();
     }
   }
-
-  public List<LayerInfo> getLayerInfosForLayerIdOrdered(Integer layerId)
-      throws AppException {
+  
+  public List<LayerInfo> getLayerInfosForLayerIdOrdered(Integer layerId) {
     EntityManager em = OctopiEntityManagerFactory.createEntityManager();
     List<LayerInfo> databaseLayerInfos;
     CriteriaBuilder cb = OctopiEntityManagerFactory.getCriteriaBuilder();

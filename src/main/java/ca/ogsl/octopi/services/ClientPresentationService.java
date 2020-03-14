@@ -8,13 +8,14 @@ package ca.ogsl.octopi.services;
 
 import ca.ogsl.octopi.dao.ClientPresentationDao;
 import ca.ogsl.octopi.dao.GenericDao;
-import ca.ogsl.octopi.errorhandling.AppException;
+import ca.ogsl.octopi.exception.EntityNotFoundException;
+import ca.ogsl.octopi.exception.InvalidRequestException;
 import ca.ogsl.octopi.models.ClientPresentation;
-import ca.ogsl.octopi.util.AppConstants;
 import ca.ogsl.octopi.util.ValidationUtil;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
-import java.util.List;
+
 import javax.validation.groups.Default;
+import java.util.List;
 
 public class ClientPresentationService {
 
@@ -24,34 +25,29 @@ public class ClientPresentationService {
   public List<ClientPresentation> listClientPresentations() {
     return this.genericDao.getAllEntities(ClientPresentation.class);
   }
-
-  public ClientPresentation getClientPresentationForId(Integer id) throws AppException {
+  
+  public ClientPresentation getClientPresentationForId(Integer id) {
     ClientPresentation clientPresentation = this.genericDao
         .getEntityFromId(id, ClientPresentation.class);
     if (clientPresentation == null) {
-      throw new AppException(404, 404,
-          "Not found", AppConstants.PORTAL_URL);
+      throw new EntityNotFoundException("Invalid client presentation identifier");
     }
     return clientPresentation;
   }
 
-  public ClientPresentation postCreateClientPresentation(ClientPresentation clientPresentation)
-      throws AppException {
+  public ClientPresentation postCreateClientPresentation(ClientPresentation clientPresentation) {
     ValidationUtil.validateBean(clientPresentation, PostCheck.class, Default.class);
     checkIfDefaultClientPresentationExist(clientPresentation);
     return this.genericDao.persistEntity(clientPresentation);
   }
 
-  private void checkIfDefaultClientPresentationExist(ClientPresentation clientPresentation)
-      throws AppException {
+  private void checkIfDefaultClientPresentationExist(ClientPresentation clientPresentation) {
     ClientPresentation defaultClientPresentation = this.clientPresentationDao
         .getDefaultClientPresentation(
             clientPresentation.getLayerId());
     if (defaultClientPresentation != null) {
-      throw new AppException(400, 400,
-          "Duplicate default client presentation. One layer cannot have multiple default"
-              + " client presentations.",
-          AppConstants.PORTAL_URL);
+      throw new InvalidRequestException("Duplicate default client presentation. One layer cannot have multiple " +
+          "default client presentations.");
     }
   }
 }

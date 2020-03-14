@@ -6,19 +6,19 @@
 
 package ca.ogsl.octopi.util;
 
-import ca.ogsl.octopi.errorhandling.AppException;
-import java.util.Set;
+import ca.ogsl.octopi.exception.APIValidationException;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.util.Set;
 
 
 public class ValidationUtil {
 
   private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-  public static <T> void validateBean(T objectToValidate, Class... groupsToValidate)
-      throws AppException {
+  public static <T> void validateBean(T objectToValidate, Class... groupsToValidate) {
     Set<ConstraintViolation<T>> constraintViolations = validator
         .validate(objectToValidate, groupsToValidate);
     if (constraintViolations.size() > 0) {
@@ -26,11 +26,8 @@ public class ValidationUtil {
     }
   }
 
-  private static <T> void throwValidationError(Set<ConstraintViolation<T>> constraintViolations)
-      throws AppException {
+  private static <T> void throwValidationError(Set<ConstraintViolation<T>> constraintViolations) {
     ConstraintViolation<T> firstViolation = constraintViolations.iterator().next();
-    throw new AppException(400, 400,
-        firstViolation.getPropertyPath() + " " + firstViolation.getMessage(),
-        AppConstants.PORTAL_URL);
+    throw new APIValidationException(firstViolation.getPropertyPath() + " " + firstViolation.getMessage());
   }
 }

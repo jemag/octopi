@@ -5,7 +5,6 @@
  */
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.ClickFormatter;
 import ca.ogsl.octopi.services.ClickFormatterService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,22 +26,21 @@ public class ClickFormatterResource {
   
   @GetMapping(value = "/click-formatters")
   @Operation(summary = "Retrieve all click formatters")
-  public Collection<ClickFormatter> listClickFormatters() throws AppException {
+  public Collection<ClickFormatter> listClickFormatters() {
     return this.clickFormatterService.listClickFormatters();
   }
   
   @GetMapping(value = "/click-formatters/{id}")
   @Operation(summary = "Get a click formatter by ID")
   public ClickFormatter getClickFormatterById(
-      @PathVariable @Parameter(description = "ID of the Click Formatter to be fetched", required = true) Integer id) throws AppException {
+      @PathVariable @Parameter(description = "ID of the Click Formatter to be fetched", required = true) Integer id) {
     return this.clickFormatterService.getClickFormatter(id);
   }
   
   @RolesAllowed("ADMIN")
   @PostMapping(value = "/click-formatters")
   @Operation(summary = "Create a new click formatter entry")
-  public ResponseEntity<ClickFormatter> postCreateClickFormatter(ClickFormatter clickFormatter)
-      throws AppException {
+  public ResponseEntity<ClickFormatter> postCreateClickFormatter(ClickFormatter clickFormatter) {
     ClickFormatter cF = this.clickFormatterService.postCreateClickFormatter(clickFormatter);
     return new ResponseEntity<>(cF, HttpStatus.CREATED);
   }

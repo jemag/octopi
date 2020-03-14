@@ -5,7 +5,6 @@
  */
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.Language;
 import ca.ogsl.octopi.services.LanguageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +26,7 @@ public class LanguageResource {
   
   @GetMapping(value = "/languages")
   @Operation(summary = "Get all languages")
-  public Collection<Language> listLanguages() throws AppException {
+  public Collection<Language> listLanguages() {
     return this.languageService.listLanguages();
   }
   
@@ -35,8 +34,7 @@ public class LanguageResource {
   @Operation(summary = "Find language by code")
   public Language getLanguageForId(
       @PathVariable @Parameter(description = "Code of language to be fetched", required = true) String code
-  )
-      throws AppException {
+  ) {
     return this.languageService.getLanguage(code);
   }
   

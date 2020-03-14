@@ -5,10 +5,9 @@
  */
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
+import ca.ogsl.octopi.exception.InvalidRequestException;
 import ca.ogsl.octopi.models.Category;
 import ca.ogsl.octopi.services.CategoryService;
-import ca.ogsl.octopi.util.AppConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +27,7 @@ public class CategoryResource {
   
   @GetMapping(value = "/categories")
   @Operation(summary = "Get a list of all categories")
-  public Collection<Category> listCategories() throws AppException {
+  public Collection<Category> listCategories() {
     return this.categoryService.listCategories();
   }
   
@@ -36,15 +35,14 @@ public class CategoryResource {
   @Operation(summary = "Get a category by ID")
   public Category getCategory(
       @PathVariable @Parameter(description = "ID of category to be fetched", required = true) Integer id
-  ) throws AppException {
+  ) {
     return this.categoryService.getCategory(id);
   }
   
   @RolesAllowed("ADMIN")
   @PostMapping(value = "/categories")
   @Operation(summary = "Create a new category entry")
-  public ResponseEntity<Category> postCreateCategory(Category category)
-      throws AppException {
+  public ResponseEntity<Category> postCreateCategory(Category category) {
     Category c = this.categoryService.postCreateCategory(category);
     return new ResponseEntity<>(c, HttpStatus.CREATED);
   }
@@ -52,12 +50,10 @@ public class CategoryResource {
   @RolesAllowed("ADMIN")
   @PutMapping(value = "/categories/{id}")
   @Operation(summary = "Update a category entry")
-  public ResponseEntity putUpdateCategory(@PathVariable @Parameter Integer categoryId, Category category)
-      throws AppException {
+  public ResponseEntity putUpdateCategory(@PathVariable @Parameter Integer categoryId, Category category) {
     Category oldCategory = this.categoryService.retrieveCategory(categoryId);
     if (oldCategory == null) {
-      throw new AppException(400, 400,
-          "Use post to create entity", AppConstants.PORTAL_URL);
+      throw new InvalidRequestException("Use post to create entity");
     } else {
       this.categoryService.putUpdateCategory(category, oldCategory);
       return ResponseEntity.status(200).build();

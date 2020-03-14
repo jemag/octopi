@@ -6,10 +6,10 @@
 
 package ca.ogsl.octopi.dao;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.LayerDescription;
 import ca.ogsl.octopi.models.LayerDescription_;
 import ca.ogsl.octopi.util.GenericsUtil;
+
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,9 +17,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 public class LayerDescriptionDao {
-
-  public LayerDescription getLayerDescriptionForLayerId(Integer layerId)
-      throws AppException {
+  
+  public LayerDescription getLayerDescriptionForLayerId(Integer layerId) {
     LayerDescription layerDescription;
     EntityManager em = OctopiEntityManagerFactory.createEntityManager();
     CriteriaBuilder cb = OctopiEntityManagerFactory.getCriteriaBuilder();

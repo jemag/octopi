@@ -5,7 +5,6 @@
  */
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.*;
 import ca.ogsl.octopi.services.LayerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -31,16 +29,15 @@ public class LayerResource {
   @Operation(summary = "Returns a list objects with the base type: Layer. Each layer will be a child type(such as " +
       "WMSLayer or WFSLayer)")
 //    @Cacheable(value = "stations", condition = "#stationCode == null")
-  public Collection<Layer> listLayers() throws AppException {
-    List<Layer> layerList = this.layerService.listLayers();
-    return layerList;
+  public Collection<Layer> listLayers() {
+    return this.layerService.listLayers();
   }
   
   @GetMapping("/layers/{id}")
   @Operation(summary = "Find a layer by ID")
   public Layer getLayerForId(
       @PathVariable @Parameter(description = "ID of layer to be fetched", required = true) Integer id
-  ) throws AppException {
+  ) {
     return this.layerService.getLayerForId(id);
   }
   
@@ -49,15 +46,14 @@ public class LayerResource {
   public Layer getLayerForCode(
       @Parameter(description = "Code of layer to be fetched", required = true) @RequestParam("code") String code,
       @Parameter(description = "Code of the language needed", required = true)
-      @RequestParam("language-code") String languageCode) throws AppException {
+      @RequestParam("language-code") String languageCode) {
     return this.layerService.getLayerForCode(code, languageCode);
   }
   
   @PostMapping("layers")
   @Operation(summary = "Create a new layer entry")
   @RolesAllowed("ADMIN")
-  public ResponseEntity<Layer> postCreateLayer(Layer layer)
-      throws AppException {
+  public ResponseEntity<Layer> postCreateLayer(Layer layer) {
     Layer l = this.layerService.postCreateLayer(layer);
     return new ResponseEntity<>(l, HttpStatus.CREATED);
   }
@@ -66,7 +62,7 @@ public class LayerResource {
   @Operation(summary = "Get an HTML segment for displaying the information about a layer based on ID")
   public String getLayerInformation(
       @PathVariable @Parameter(description = "ID of layer to be fetched", required = true) Integer layerId
-  ) throws AppException {
+  ) {
     return this.layerService.getLayerInformation(layerId);
   }
   
@@ -74,7 +70,7 @@ public class LayerResource {
   @Operation(summary = "Gets all of the client presentations associated with a given layer")
   public Collection<ClientPresentation> listClientPresentations(
       @PathVariable @Parameter(description = "ID of layer to be fetched", required = true) Integer layerId
-  ) throws AppException {
+  ) {
     return this.layerService.listClientPresentations(layerId);
   }
   
@@ -82,7 +78,7 @@ public class LayerResource {
   @Operation(summary = "Gets the description for a specific layer based on layer ID")
   public LayerDescription getLayerDescription(
       @PathVariable @Parameter(description = "ID of the layer", required = true) Integer layerId
-  ) throws AppException {
+  ) {
     return this.layerService.getLayerDescription(layerId);
   }
   
@@ -90,7 +86,7 @@ public class LayerResource {
   @Operation(summary = "Gets the a collection of layerInfo entries for a layer based on layer ID")
   public Collection<LayerInfo> getLayerInfo(
       @PathVariable @Parameter(description = "ID of the layer") Integer layerId
-  ) throws AppException {
+  ) {
     return this.layerService.getLayerInfo(layerId);
   }
   
@@ -98,7 +94,7 @@ public class LayerResource {
   @Operation(summary = "Gets the Click Strategy for a specific layer based on layer ID")
   public ClickStrategy getClickStrategy(
       @PathVariable @Parameter(description = "ID of the layer", required = true) Integer layerId
-  ) throws AppException {
+  ) {
     return this.layerService.getClickStrategy(layerId);
   }
   
@@ -106,7 +102,7 @@ public class LayerResource {
   @Operation(summary = "Gets the Click Formatter for a specific layer based on layer ID")
   public ClickFormatter getClickFormatter(
       @PathVariable @Parameter(description = "ID of the layer", required = true) Integer layerId
-  ) throws AppException {
+  ) {
     return this.layerService.getClickFormatter(layerId);
   }
 }

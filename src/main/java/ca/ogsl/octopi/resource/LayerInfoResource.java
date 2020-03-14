@@ -5,7 +5,6 @@
  */
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.LayerInfo;
 import ca.ogsl.octopi.services.LayerInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,15 +33,14 @@ public class LayerInfoResource {
   @Operation(summary = "Find layer info by ID")
   public LayerInfo getLayerInfoForId(
       @PathVariable @Parameter(description = "ID of the layer info to be fetched", required = true) Integer id
-  ) throws AppException {
+  ) {
     return this.layerInfoService.getLayerInfoForId(id);
   }
   
   @RolesAllowed("ADMIN")
   @PostMapping(value = "/layer-info/{id}")
   @Operation(summary = "Create a new layer info entry")
-  public ResponseEntity<LayerInfo> postCreateLayerInfo(LayerInfo layerInfo)
-      throws AppException {
+  public ResponseEntity<LayerInfo> postCreateLayerInfo(LayerInfo layerInfo) {
     LayerInfo databaseLayerInfo = this.layerInfoService.postCreateLayerInfo(layerInfo);
     return ResponseEntity.status(201).body(databaseLayerInfo);
   }

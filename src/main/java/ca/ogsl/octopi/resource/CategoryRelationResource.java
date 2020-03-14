@@ -5,10 +5,9 @@
  */
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
+import ca.ogsl.octopi.exception.InvalidRequestException;
 import ca.ogsl.octopi.models.CategoryRelation;
 import ca.ogsl.octopi.services.CategoryRelationService;
-import ca.ogsl.octopi.util.AppConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +27,7 @@ public class CategoryRelationResource {
   
   @GetMapping(value = "/category-relations")
   @Operation(summary = "Get a list of all category relations")
-  public Collection<CategoryRelation> listCategories() throws AppException {
+  public Collection<CategoryRelation> listCategories() {
     return this.categoryRelationService.listCategoryRelations();
   }
   
@@ -36,15 +35,14 @@ public class CategoryRelationResource {
   @Operation(summary = "Get category relation by ID")
   public CategoryRelation getCategoryRelation(
       @PathVariable @Parameter(description = "ID of category relation to be fetched", required = true) Integer id
-  ) throws AppException {
+  ) {
     return this.categoryRelationService.getCategoryRelation(id);
   }
   
   @RolesAllowed("ADMIN")
   @PostMapping(value = "/category-relations")
   @Operation(summary = "Create a new category relation entry")
-  public ResponseEntity<CategoryRelation> postCreateCategoryRelation(CategoryRelation categoryRelation)
-      throws AppException {
+  public ResponseEntity<CategoryRelation> postCreateCategoryRelation(CategoryRelation categoryRelation) {
     CategoryRelation cR = this.categoryRelationService
         .postCreateCategoryRelation(categoryRelation);
     return new ResponseEntity<>(cR, HttpStatus.CREATED);
@@ -54,13 +52,11 @@ public class CategoryRelationResource {
   @PutMapping(value = "/category-relations/{categoryRelationId}")
   @Operation(summary = "Update a category relation entry")
   public ResponseEntity putUpdateCategoryRelation(@PathVariable @Parameter Integer categoryRelationId,
-                                                  CategoryRelation categoryRelation)
-      throws AppException {
+                                                  CategoryRelation categoryRelation) {
     CategoryRelation oldCategoryRelation = this.categoryRelationService
         .retrieveCategoryRelation(categoryRelationId);
     if (oldCategoryRelation == null) {
-      throw new AppException(400, 400,
-          "Use post to create entity", AppConstants.PORTAL_URL);
+      throw new InvalidRequestException("Use post to create entity");
     } else {
       this.categoryRelationService.putUpdateCategoryRelation(categoryRelation, oldCategoryRelation);
       return ResponseEntity.status(200).build();

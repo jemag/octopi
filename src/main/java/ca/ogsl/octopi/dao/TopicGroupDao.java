@@ -6,25 +6,20 @@
 
 package ca.ogsl.octopi.dao;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.TopicGroup;
 import ca.ogsl.octopi.models.TopicGroup_;
 import ca.ogsl.octopi.util.GenericsUtil;
-import java.util.List;
+import org.hibernate.transform.DistinctResultTransformer;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import org.hibernate.transform.DistinctResultTransformer;
+import javax.persistence.criteria.*;
+import java.util.List;
 
 public class TopicGroupDao {
-
-  public List<TopicGroup> listTopicGroups() throws AppException {
+  
+  public List<TopicGroup> listTopicGroups() {
     EntityManager em = OctopiEntityManagerFactory.createEntityManager();
     CriteriaBuilder cb = OctopiEntityManagerFactory.getCriteriaBuilder();
     List<TopicGroup> topicGroups;

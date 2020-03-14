@@ -5,7 +5,6 @@
  */
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.ClickStrategy;
 import ca.ogsl.octopi.services.ClickStrategyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +26,7 @@ public class ClickStrategyResource {
   
   @GetMapping(value = "/click-strategies")
   @Operation(summary = "Get all click strategies")
-  public Collection<ClickStrategy> listClickStrategies() throws AppException {
+  public Collection<ClickStrategy> listClickStrategies() {
     return this.clickStrategyService.listClickStrategies();
   }
   
@@ -35,15 +34,14 @@ public class ClickStrategyResource {
   @Operation(summary = "Find click strategy by ID")
   public ClickStrategy getClickStrategyById(
       @PathVariable @Parameter(description = "ID of the Click Strategy to be fetched", required = true)
-          Integer id) throws AppException {
+          Integer id) {
     return this.clickStrategyService.getClickStrategy(id);
   }
   
   @RolesAllowed("ADMIN")
   @PostMapping(value = "/click-strategies")
   @Operation(summary = "Create a new click strategy entry")
-  public ResponseEntity<ClickStrategy> postCreateClickStrategy(ClickStrategy clickStrategy)
-      throws AppException {
+  public ResponseEntity<ClickStrategy> postCreateClickStrategy(ClickStrategy clickStrategy) {
     ClickStrategy cS = this.clickStrategyService.postCreateClickStrategy(clickStrategy);
     return new ResponseEntity<>(cS, HttpStatus.CREATED);
   }

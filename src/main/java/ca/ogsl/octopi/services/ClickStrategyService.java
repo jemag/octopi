@@ -7,13 +7,13 @@
 package ca.ogsl.octopi.services;
 
 import ca.ogsl.octopi.dao.GenericDao;
-import ca.ogsl.octopi.errorhandling.AppException;
+import ca.ogsl.octopi.exception.EntityNotFoundException;
 import ca.ogsl.octopi.models.ClickStrategy;
-import ca.ogsl.octopi.util.AppConstants;
 import ca.ogsl.octopi.util.ValidationUtil;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
-import java.util.List;
+
 import javax.validation.groups.Default;
+import java.util.List;
 
 public class ClickStrategyService {
 
@@ -22,17 +22,16 @@ public class ClickStrategyService {
   public List<ClickStrategy> listClickStrategies() {
     return this.genericDao.getAllEntities(ClickStrategy.class);
   }
-
-  public ClickStrategy getClickStrategy(Integer id) throws AppException {
+  
+  public ClickStrategy getClickStrategy(Integer id) {
     ClickStrategy clickStrategy = this.genericDao.getEntityFromId(id, ClickStrategy.class);
     if (clickStrategy == null) {
-      throw new AppException(404, 404,
-          "Not found", AppConstants.PORTAL_URL);
+      throw new EntityNotFoundException("Not found");
     }
     return clickStrategy;
   }
-
-  public ClickStrategy postCreateClickStrategy(ClickStrategy clickStrategy) throws AppException {
+  
+  public ClickStrategy postCreateClickStrategy(ClickStrategy clickStrategy) {
     ValidationUtil.validateBean(clickStrategy, PostCheck.class, Default.class);
     return this.genericDao.persistEntity(clickStrategy);
   }

@@ -8,47 +8,44 @@ package ca.ogsl.octopi.services;
 
 import ca.ogsl.octopi.dao.GenericDao;
 import ca.ogsl.octopi.dao.LayerInfoDao;
-import ca.ogsl.octopi.errorhandling.AppException;
+import ca.ogsl.octopi.exception.EntityNotFoundException;
+import ca.ogsl.octopi.exception.InvalidRequestException;
 import ca.ogsl.octopi.models.Layer;
 import ca.ogsl.octopi.models.LayerInfo;
-import ca.ogsl.octopi.util.AppConstants;
 import ca.ogsl.octopi.util.ValidationUtil;
 import ca.ogsl.octopi.validation.tagging.PostCheck;
-import java.util.List;
+
 import javax.validation.groups.Default;
+import java.util.List;
 
 public class LayerInfoService {
 
   private GenericDao genericDao = new GenericDao();
   private LayerInfoDao layerInfoDao = new LayerInfoDao();
-
-  public LayerInfo getLayerInfoForId(Integer id) throws AppException {
+  
+  public LayerInfo getLayerInfoForId(Integer id) {
     LayerInfo layerInfo = this.genericDao.getEntityFromId(id, LayerInfo.class);
     if (layerInfo == null) {
-      throw new AppException(404, 404,
-          "Not found", AppConstants.PORTAL_URL);
+      throw new EntityNotFoundException("Not found");
     }
     return layerInfo;
   }
-
-  public LayerInfo postCreateLayerInfo(LayerInfo layerInfo) throws AppException {
+  
+  public LayerInfo postCreateLayerInfo(LayerInfo layerInfo) {
     ValidationUtil.validateBean(layerInfo, PostCheck.class, Default.class);
     Layer targetLayer = this.genericDao.getEntityFromId(layerInfo.getLayerId(),
         Layer.class);
     if (targetLayer == null) {
-      throw new AppException(400, 400,
-          "Specified layer does not exist. Layer info must target an existing layer",
-          AppConstants.PORTAL_URL);
+      throw new InvalidRequestException("Specified layer does not exist. Layer info must target an existing layer");
     }
     return this.genericDao.persistEntity(layerInfo);
   }
 
-  public List<LayerInfo> postCreateMultipleLayerInfos(List<LayerInfo> layerInfos)
-      throws AppException {
+  public List<LayerInfo> postCreateMultipleLayerInfos(List<LayerInfo> layerInfos) {
     return this.layerInfoDao.createMultipleLayerInfos(layerInfos);
   }
-
-  public void deleteLayerInfoForId(Integer id) throws AppException {
+  
+  public void deleteLayerInfoForId(Integer id) {
     this.genericDao.deleteEntityFromId(id, LayerInfo.class);
   }
 

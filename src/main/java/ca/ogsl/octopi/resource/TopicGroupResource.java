@@ -6,19 +6,17 @@
 
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
+import ca.ogsl.octopi.exception.InvalidRequestException;
 import ca.ogsl.octopi.models.TopicGroup;
 import ca.ogsl.octopi.services.TopicGroupService;
-import ca.ogsl.octopi.util.AppConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
 import javax.annotation.security.RolesAllowed;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api")
@@ -26,35 +24,34 @@ import javax.annotation.security.RolesAllowed;
 public class TopicGroupResource {
 
   private TopicGroupService topicGroupService = new TopicGroupService();
-
+  
   @GetMapping(value = "/topic-groups")
   @Operation(summary = "Get a list of all topic groups")
-  public Collection<TopicGroup> listTopicGroups() throws AppException {
+  public Collection<TopicGroup> listTopicGroups() {
     return this.topicGroupService.listTopicGroups();
   }
-
+  
   @GetMapping(value = "/topic-groups/{id}")
   @Operation(summary = "Get a topic group by ID")
   public TopicGroup getTopicGroup(
       @PathVariable @Parameter(description = "ID of topic group to be fetched", required = true) Integer id
-  ) throws AppException {
+  ) {
     return this.topicGroupService.getTopicGroup(id);
   }
-
+  
   @GetMapping(value = "/topic-groups/getTopicGroupForCode")
   @Operation(summary = "Get topic group by code and language code")
   public TopicGroup getTopicGroupForCode(
       @PathVariable @Parameter(description = "Code of topic group to be fetched", required = true) String code,
       @PathVariable @Parameter(description = "Code of the language needed", required = true)
-      @RequestParam("language-code") String languageCode) throws AppException {
+      @RequestParam("language-code") String languageCode) {
     return this.topicGroupService.getTopicGroupForCode(code, languageCode);
   }
 
   @RolesAllowed("ADMIN")
   @PostMapping(value = "/topic-groups")
   @Operation(summary = "Create a new topic group entry")
-  public ResponseEntity<TopicGroup> postCreateTopicGroup(TopicGroup topicGroup)
-      throws AppException {
+  public ResponseEntity<TopicGroup> postCreateTopicGroup(TopicGroup topicGroup) {
     TopicGroup databaseTopicGroup = this.topicGroupService.postCreateTopicGroup(topicGroup);
     return ResponseEntity.status(201).body(databaseTopicGroup);
   }
@@ -62,12 +59,10 @@ public class TopicGroupResource {
   @PutMapping(value = "/topic-groups/{id}")
   @Operation(summary = "Update a topic group entry")
   @RolesAllowed("ADMIN")
-  public ResponseEntity putTopicGroup(@PathVariable("id") Integer topicGroupId, TopicGroup topicGroup)
-      throws AppException {
+  public ResponseEntity putTopicGroup(@PathVariable("id") Integer topicGroupId, TopicGroup topicGroup) {
     TopicGroup oldTopicGroup = this.topicGroupService.retrieveTopicGroup(topicGroupId);
     if (oldTopicGroup == null) {
-      throw new AppException(400, 400,
-          "Use post to create entity", AppConstants.PORTAL_URL);
+      throw new InvalidRequestException("Use post to create entity");
     } else {
       this.topicGroupService.putUpdateTopicGroup(topicGroup, oldTopicGroup);
       return ResponseEntity.status(200).build();

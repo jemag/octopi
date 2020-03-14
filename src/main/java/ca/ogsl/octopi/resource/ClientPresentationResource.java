@@ -5,7 +5,6 @@
  */
 package ca.ogsl.octopi.resource;
 
-import ca.ogsl.octopi.errorhandling.AppException;
 import ca.ogsl.octopi.models.ClientPresentation;
 import ca.ogsl.octopi.services.ClientPresentationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +26,7 @@ public class ClientPresentationResource {
   
   @GetMapping(value = "/client-presentations")
   @Operation(summary = "Get all client presentations")
-  public Collection<ClientPresentation> listClientPresentations() throws AppException {
+  public Collection<ClientPresentation> listClientPresentations() {
     return this.clientPresentationService.listClientPresentations();
   }
   
@@ -35,15 +34,14 @@ public class ClientPresentationResource {
   @Operation(summary = "Find client presentation by ID")
   public ClientPresentation getClientPresentationForId(
       @PathVariable @Parameter(description = "ID of the client presentation to be fetched",
-          required = true) Integer id) throws AppException {
+          required = true) Integer id) {
     return this.clientPresentationService.getClientPresentationForId(id);
   }
   
   @RolesAllowed("ADMIN")
   @PostMapping(value = "/client-presentations")
   @Operation(summary = "Create a new client presentation entry")
-  public ResponseEntity<ClientPresentation> postCreateClientPresentation(ClientPresentation clientPresentation)
-      throws AppException {
+  public ResponseEntity<ClientPresentation> postCreateClientPresentation(ClientPresentation clientPresentation) {
     ClientPresentation databaseCP = this.clientPresentationService.
         postCreateClientPresentation(clientPresentation);
     return new ResponseEntity<>(databaseCP, HttpStatus.CREATED);
